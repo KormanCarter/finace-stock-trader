@@ -1,5 +1,34 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Firebase setup
+
+1. Install dependencies (already added to `package.json`): `npm install firebase`.
+2. Create a `.env.local` file in the project root with your Firebase config **and** Finnhub API key:
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=000000000000
+NEXT_PUBLIC_FIREBASE_APP_ID=1:000000000000:web:abcdef123456
+FINNHUB_API_KEY=your-finnhub-token
+```
+
+3. Import the initialized app/services from `src/lib/firebase.js` wherever you need Firebase features:
+
+```javascript
+import { auth, db } from "@/lib/firebase";
+```
+
+Update the `.env.local` values with the credentials from your Firebase console before running `npm run dev`.
+
+### Finnhub setup
+
+1. Create a free account at [finnhub.io](https://finnhub.io/) and generate an API token.
+2. Add that token to `FINNHUB_API_KEY` inside `.env.local` (see above).
+3. Restart `npm run dev` after updating the env file so the `/api/quote` route can call Finnhub.
+
 ## Getting Started
 
 First, run the development server:
