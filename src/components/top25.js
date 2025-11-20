@@ -1,0 +1,30 @@
+const top25MarketCap = [
+  { symbol: "AAPL", name: "Apple", marketCapTnUSD: 3.7 },
+  { symbol: "MSFT", name: "Microsoft", marketCapTnUSD: 3.4 },
+  { symbol: "NVDA", name: "NVIDIA", marketCapTnUSD: 3.0 },
+  { symbol: "GOOGL", name: "Alphabet Class A", marketCapTnUSD: 2.2 },
+  { symbol: "AMZN", name: "Amazon", marketCapTnUSD: 1.9 },
+  { symbol: "META", name: "Meta Platforms", marketCapTnUSD: 1.3 },
+  { symbol: "BRK.B", name: "Berkshire Hathaway B", marketCapTnUSD: 1.1 },
+  { symbol: "TSLA", name: "Tesla", marketCapTnUSD: 0.8 },
+  { symbol: "LLY", name: "Eli Lilly", marketCapTnUSD: 0.7 },
+  { symbol: "AVGO", name: "Broadcom", marketCapTnUSD: 0.7 },
+  { symbol: "TSM", name: "Taiwan Semi", marketCapTnUSD: 0.7 },
+  { symbol: "V", name: "Visa", marketCapTnUSD: 0.6 },
+  { symbol: "JPM", name: "JPMorgan Chase", marketCapTnUSD: 0.6 },
+  { symbol: "WMT", name: "Walmart", marketCapTnUSD: 0.5 },
+  { symbol: "XOM", name: "Exxon Mobil", marketCapTnUSD: 0.5 },
+  { symbol: "ASML", name: "ASML Holding", marketCapTnUSD: 0.4 },
+  { symbol: "ORCL", name: "Oracle", marketCapTnUSD: 0.4 },
+  { symbol: "MA", name: "Mastercard", marketCapTnUSD: 0.4 },
+  { symbol: "NVO", name: "Novo Nordisk", marketCapTnUSD: 0.4 },
+  { symbol: "UNH", name: "UnitedHealth", marketCapTnUSD: 0.4 },
+  { symbol: "COST", name: "Costco", marketCapTnUSD: 0.4 },
+  { symbol: "PG", name: "Procter & Gamble", marketCapTnUSD: 0.4 },
+  { symbol: "HD", name: "Home Depot", marketCapTnUSD: 0.3 },
+  { symbol: "SAP", name: "SAP", marketCapTnUSD: 0.3 },
+  { symbol: "TM", name: "Toyota Motor", marketCapTnUSD: 0.3 },
+];
+
+export { top25MarketCap };
+export default top25MarketCap;
