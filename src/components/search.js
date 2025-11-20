@@ -115,6 +115,44 @@ export default function Search() {
         fetchQuote(symbolValue);
     }
 
+    function handleBuy(event) {
+        event.preventDefault();
+        const amount = Number(new FormData(event.currentTarget).get("amount") || 0);
+        if (!amount || amount < 1) {
+            setError("Enter a valid dollar amount.");
+            return;
+        }
+
+        if (!quote) return;
+
+        const shares = amount / quote.current;
+        alert(`Buying ${shares.toFixed(2)} shares of ${quote.symbol} at $${quote.current.toFixed(2)}.`);
+
+        const purchase = {
+            symbol: quote.symbol,
+            amount,
+            shares: Number(shares.toFixed(6)),
+            price: quote.current,
+            timestamp: new Date().toISOString(),
+        };
+
+        try {
+            const currentRaw = localStorage.getItem("currentUser");
+            const currentUser = currentRaw ? JSON.parse(currentRaw) : null;
+            const storageKey = currentUser?.email
+                ? `mansamoneyOrders:${currentUser.email}`
+                : "mansamoneyOrders:guest";
+
+            const existingRaw = localStorage.getItem(storageKey);
+            const existing = existingRaw ? JSON.parse(existingRaw) : [];
+            const nextOrders = Array.isArray(existing) ? [...existing, purchase] : [purchase];
+            localStorage.setItem(storageKey, JSON.stringify(nextOrders));
+        } catch (storageError) {
+            console.error("Failed to persist order", storageError);
+            setError("Failed to save order.");
+        }
+    }
+
     return (
         <section className="max-w-4xl mx-auto mb-6">
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -162,40 +200,37 @@ export default function Search() {
             )}
             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             {quote && (
-                <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                    <div className="text-sm text-gray-500">Latest quote</div>
-                    <div className="text-2xl font-bold text-gray-900">{quote.symbol}</div>
-                    <dl className="mt-3 grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <dt className="text-gray-500">Current</dt>
-                            <dd className="text-gray-900 text-lg font-semibold">${formatPrice(quote.current)}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-gray-500">Open</dt>
-                            <dd className="text-gray-900">${formatPrice(quote.open)}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-gray-500">Day High</dt>
-                            <dd className="text-gray-900">${formatPrice(quote.high)}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-gray-500">Day Low</dt>
-                            <dd className="text-gray-900">${formatPrice(quote.low)}</dd>
-                        </div>
-                        <div>
-                            <dt className="text-gray-500">Prev Close</dt>
-                            <dd className="text-gray-900">${formatPrice(quote.previousClose)}</dd>
-                        </div>
-                        <div className="col-span-2 flex justify-end">
-                            <button
-                                type="button"
-                                className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700"
-                            >
-                                Add stock
-                            </button>
-                        </div>
-                    </dl>
-                </div>
+                <article className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
+                    <div className="flex flex-col gap-1">
+                        <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Quote</p>
+                        <p className="text-xl font-semibold text-gray-900">
+                            {quote.symbol}
+                        </p>
+                        <span className="text-base font-medium text-emerald-600">
+                            ${formatPrice(quote.current)}
+                        </span>
+                    </div>
+
+                    <form className="mt-4 flex flex-col gap-3 rounded-xl bg-white/60 p-4 sm:flex-row sm:items-end" onSubmit={handleBuy}>
+                        <label className="flex flex-1 flex-col text-sm font-medium text-gray-600">
+                            $ Amount
+                            <input
+                                name="amount"
+                                type="number"
+                                min={1}
+                                step={1}
+                                defaultValue={100}
+                                className="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            className="rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-emerald-500 h-fit"
+                        >
+                            Buy
+                        </button>
+                    </form>
+                </article>
             )}
         </section>
     );
