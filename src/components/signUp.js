@@ -27,14 +27,20 @@ export default function SignUp({ onSwitch }) {
       return
     }
 
+    const existing = JSON.parse(localStorage.getItem('signupCredentials') || 'null');
+    if (existing && existing.email === email.trim()) {
+      setError('That user has already been created, please sign in instead.');
+      return;
+    }
+
     try {
-      const payload = {
+      const user = {
         fullName: fullName.trim(),
         email: email.trim(),
         password,
         savedAt: new Date().toISOString(),
       }
-      localStorage.setItem('signupCredentials', JSON.stringify(payload))
+      localStorage.setItem('signupCredentials', JSON.stringify(user))
       setSuccess('Credentials saved locally. Redirecting to sign in...')
       alert("Success! You may sign in now.");
 
@@ -60,7 +66,7 @@ export default function SignUp({ onSwitch }) {
         </div>
 
         <form className="space-y-5 px-6 py-6" onSubmit={handleSubmit}>
-          {/* clickable text to switch to Sign In view */}
+          
           <div
             className="text-2xl font-bold text-blue-600 underline cursor-pointer sign-in"
             onClick={onSwitch}
