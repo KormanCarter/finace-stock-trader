@@ -67,9 +67,9 @@ export default function Enter(){
                         </div>
                         <button 
                             type="submit"
-                            className="w-full mt-6 rounded-lg bg-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-emerald-500"
+                            className="group relative w-full mt-6 overflow-hidden rounded-lg bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-200/40 transition [background-size:200%_100%] hover:[background-position:100%_0] hover:shadow-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 active:scale-[0.97]"
                         >
-                            Save Income
+                            <span className="relative z-10">Save Income</span>
                         </button>
                     </form>
                 </article>

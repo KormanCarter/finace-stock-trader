@@ -23,16 +23,16 @@ export default function AdvicePage() {
     }, [])
 
     return (
-        <main className="min-h-screen bg-white px-6 py-12">
-            <section className="mx-auto max-w-5xl space-y-6">
-                <header>
-                    <p className="text-xs uppercase tracking-[0.5em] text-gray-500">
+        <main className="min-h-screen bg-white m-0 p-0 w-screen">
+            <section className="m-0 p-0 w-screen space-y-6">
+                <header className="px-6 pt-6 pb-2 space-y-2 bg-white/50">
+                    <p className="inline-block rounded-md bg-gray-50 px-4 py-2 text-xs uppercase tracking-[0.5em] text-gray-600">
                         MansaMoney
                     </p>
-                    <h1 className="text-3xl font-black">Investment Advice</h1>
+                    <h1 className="text-3xl font-black px-2">Investment Advice</h1>
                     <Link
                         href="/home"
-                        className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
+                        className="inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition"
                     >
                         ← Back
                     </Link>

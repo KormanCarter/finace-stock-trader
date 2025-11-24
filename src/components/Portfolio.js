@@ -33,7 +33,6 @@ export default function Portfolio() {
                             const price = await fetchQuote(order.symbol);
                             return [order.symbol, price];
                         } catch (err) {
-                            console.error(`Failed to fetch ${order.symbol}:`, err.message);
                             return [order.symbol, null];
                         }
                     })
@@ -64,7 +63,6 @@ export default function Portfolio() {
             if (typeof data.c !== "number") throw new Error("Missing price data");
             return data.c;
         } catch (err) {
-            console.error(`fetchQuote(${symbol}):`, err.message);
             throw err;
         }
     }
@@ -91,6 +89,7 @@ export default function Portfolio() {
                     <p className="text-center text-gray-600">You haven't purchased any stocks yet.</p>
                 ) : (
                     <>
+                        {/* 4 Stats Boxes */}
                         {(() => {
                             const totalInvested = orders.reduce((sum, order) => sum + order.amount, 0);
                             const totalCurrent = orders.reduce((sum, order) => {
@@ -98,25 +97,49 @@ export default function Portfolio() {
                                 return sum + (currentPrice ? currentPrice * order.shares : order.amount);
                             }, 0);
                             const totalGain = totalCurrent - totalInvested;
-                            const totalGainPercent = (totalGain / totalInvested) * 100;
+                            const totalGainPercent = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
 
                             return (
-                                <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-4 shadow-sm">
-                                    <div className="flex flex-col gap-1">
-                                        <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Portfolio Summary</p>
-                                        <p className="text-xl font-semibold text-gray-900">
-                                            Total Invested: ${totalInvested.toFixed(2)}
-                                        </p>
-                                        <p className="text-xl font-semibold text-gray-900">
-                                            Current Value: ${totalCurrent.toFixed(2)}
-                                        </p>
-                                        <span className={`text-lg font-bold ${totalGain >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                                            {totalGain >= 0 ? "+" : ""}${totalGain.toFixed(2)} ({totalGainPercent >= 0 ? "+" : ""}{totalGainPercent.toFixed(2)}%)
-                                        </span>
-                                    </div>
-                                </article>
+                                <div className="grid grid-cols-4 gap-4 mb-6">
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-4 shadow-sm">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Total Invested</p>
+                                            <p className="text-2xl font-bold text-emerald-600">
+                                                ${totalInvested.toFixed(2)}
+                                            </p>
+                                        </div>
+                                    </article>
+
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-4 shadow-sm">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Current Value</p>
+                                            <p className="text-2xl font-bold text-blue-600">
+                                                ${totalCurrent.toFixed(2)}
+                                            </p>
+                                        </div>
+                                    </article>
+
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 px-5 py-4 shadow-sm">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Total Gain/Loss</p>
+                                            <p className={`text-2xl font-bold ${totalGain >= 0 ? 'text-purple-600' : 'text-red-600'}`}>
+                                                ${totalGain.toFixed(2)}
+                                            </p>
+                                        </div>
+                                    </article>
+
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-orange-50 to-red-50 px-5 py-4 shadow-sm">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Return %</p>
+                                            <p className={`text-2xl font-bold ${totalGainPercent >= 0 ? 'text-orange-600' : 'text-red-600'}`}>
+                                                {totalGainPercent.toFixed(2)}%
+                                            </p>
+                                        </div>
+                                    </article>
+                                </div>
                             );
                         })()}
+
                         <div className="grid gap-4">
                             {orders.map((order, index) => {
                                 const currentPrice = prices[order.symbol];

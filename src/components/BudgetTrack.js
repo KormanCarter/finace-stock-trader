@@ -17,6 +17,17 @@ export default function BugetTracker(){
     const [other, setOthers] = useState('')
     const [showRecommended, setShowRecommended] = useState(true)
 
+    // Derived remaining balance updates automatically when any dependency changes
+    const remainingBalance = (Number(income) || 0)
+        - ((Number(housing) || 0)
+        + (Number(food) || 0)
+        + (Number(savings) || 0)
+        + (Number(carPayment) || 0)
+        + (Number(groceries) || 0)
+        + (Number(investments) || 0)
+        + (Number(other) || 0)
+        + (Number(Sports) || 0));
+
     useEffect(() => {
         // Load income from localStorage
         const userRaw = localStorage.getItem("currentUser");
@@ -104,29 +115,9 @@ export default function BugetTracker(){
 
                 {income && (
                     <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-4 shadow-sm">
-                        <div className="grid grid-cols-2 gap-4">
-                            
-                            <div className="flex flex-col gap-1">
-                                <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Budget Balance</p>
-                                <p className={`text-2xl font-bold ${
-                                    (Number(income) - (Number(housing) || 0) - (Number(food) || 0) - (Number(savings) || 0) - (Number(carPayment) || 0) - (Number(groceries) || 0) - (Number(investments) || 0) - (Number(other) || 0) - (Number(Sports) || 0)) >= 0 
-                                    ? 'text-emerald-600' 
-                                    : 'text-red-600'
-                                }`}>
-                                    ${(Number(income) - (Number(housing) || 0) - (Number(food) || 0) - (Number(savings) || 0) - (Number(carPayment) || 0) - (Number(groceries) || 0) - (Number(investments) || 0) - (Number(other) || 0) - (Number(Sports) || 0)).toFixed(2)}
-                                </p>
-                            </div>
-                            
-                            <div className="flex flex-col gap-1">
-                                <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Remaining Stock Balance</p>
-                                <p className={`text-2xl font-bold ${
-                                    (Number(investments) || 0) >= 0 
-                                    ? 'text-emerald-600' 
-                                    : 'text-red-600'
-                                }`}>
-                                    ${(Number(investments) || 0).toFixed(2)}
-                                </p>
-                            </div>
+                        <div className="flex flex-col gap-1">
+                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Remaining Balance</p>
+                            <p className={`text-2xl font-bold ${remainingBalance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{remainingBalance.toFixed(2)}</p>
                         </div>
                     </article>
                 )}

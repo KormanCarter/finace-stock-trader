@@ -136,22 +136,23 @@ export default function IndexFundsPage() {
                 className="mt-4 flex flex-col gap-3 rounded-xl bg-white/60 p-4 sm:flex-row sm:items-center"
                 onSubmit={(event) => handleBuy(event, fund)}
               >
-                <label className="flex flex-1 flex-col text-sm font-medium text-gray-600">
-                  $ Amount
+                <div className="flex flex-1 items-center gap-3">
+                  <label htmlFor={`amount-${fund.symbol}`} className="text-sm font-medium text-gray-600 whitespace-nowrap">$ Amount</label>
                   <input
+                    id={`amount-${fund.symbol}`}
                     name="amount"
                     type="number"
                     min={1}
                     step={1}
                     defaultValue={100}
-                    className="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-base text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                   />
-                </label>
+                </div>
                 <button
                   type="submit"
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-emerald-500"
+                  className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/40 transition [background-size:200%_100%] hover:[background-position:100%_0] hover:shadow-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 active:scale-[0.97]"
                 >
-                  Buy
+                  <span className="relative z-10">Buy</span>
                 </button>
               </form>
             </article>
