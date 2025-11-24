@@ -15,6 +15,7 @@ export default function BugetTracker(){
     const [investments, setInvestments] = useState('')
     const [Sports, setSports] = useState('')
     const [other, setOthers] = useState('')
+    const [showRecommended, setShowRecommended] = useState(true)
 
     useEffect(() => {
         // Load income from localStorage
@@ -82,7 +83,7 @@ export default function BugetTracker(){
         const storageKey = `mansamoneyBudget:${currentUser.email}`;
         localStorage.setItem(storageKey, JSON.stringify(budgetData));
         
-        alert("Budget saved successfully!");
+        router.push('/advice');
     }
 
     return (
@@ -106,7 +107,7 @@ export default function BugetTracker(){
                         <div className="grid grid-cols-2 gap-4">
                             
                             <div className="flex flex-col gap-1">
-                                <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Remaining Budget</p>
+                                <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Budget Balance</p>
                                 <p className={`text-2xl font-bold ${
                                     (Number(income) - (Number(housing) || 0) - (Number(food) || 0) - (Number(savings) || 0) - (Number(carPayment) || 0) - (Number(groceries) || 0) - (Number(investments) || 0) - (Number(other) || 0) - (Number(Sports) || 0)) >= 0 
                                     ? 'text-emerald-600' 
@@ -115,17 +116,38 @@ export default function BugetTracker(){
                                     ${(Number(income) - (Number(housing) || 0) - (Number(food) || 0) - (Number(savings) || 0) - (Number(carPayment) || 0) - (Number(groceries) || 0) - (Number(investments) || 0) - (Number(other) || 0) - (Number(Sports) || 0)).toFixed(2)}
                                 </p>
                             </div>
+                            
+                            <div className="flex flex-col gap-1">
+                                <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Remaining Stock Balance</p>
+                                <p className={`text-2xl font-bold ${
+                                    (Number(investments) || 0) >= 0 
+                                    ? 'text-emerald-600' 
+                                    : 'text-red-600'
+                                }`}>
+                                    ${(Number(investments) || 0).toFixed(2)}
+                                </p>
+                            </div>
                         </div>
                     </article>
                 )}
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-semibold text-gray-800">Budget Allocations</h2>
+                        
+                    </div>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Housing</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.30).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setHousing((Number(income) * 0.30).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
@@ -141,7 +163,13 @@ export default function BugetTracker(){
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Food</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.12).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFood((Number(income) * 0.12).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
@@ -157,7 +185,13 @@ export default function BugetTracker(){
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Savings</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.20).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSavings((Number(income) * 0.20).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
@@ -173,7 +207,13 @@ export default function BugetTracker(){
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Car Payment</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.10).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setCarPayment((Number(income) * 0.10).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
@@ -189,7 +229,13 @@ export default function BugetTracker(){
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Groceries</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.10).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setGroceries((Number(income) * 0.10).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
@@ -205,7 +251,13 @@ export default function BugetTracker(){
                             <div className="rounded-xl bg-white/60 p-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-sm font-medium text-gray-600">Investments</label>
-                                    <span className="text-xs text-gray-400">(Recommended: ${(Number(income) * 0.08).toFixed(2)})</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setInvestments((Number(income) * 0.08).toFixed(2))}
+                                        className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded transition"
+                                    >
+                                        Recommended
+                                    </button>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-600">$</span>
