@@ -13,7 +13,6 @@ export default function Home() {
                 
             </header>
             <section className="mx-auto max-w-6xl">
-                <h2 className="mb-3 text-lg font-semibold text-gray-800">Featured Sections</h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                     <Link
                         href="/budget"

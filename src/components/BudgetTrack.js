@@ -106,10 +106,10 @@ export default function BugetTracker(){
                     </p>
                     <h1 className="text-3xl font-black">Budget Tracker</h1>
                     <Link
-                        href="/budget"
+                        href="/budget?edit=true"
                         className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
                     >
-                        ← Back
+                        ← Back to Income Entry
                     </Link>
                 </header>
 

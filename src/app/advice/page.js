@@ -30,12 +30,20 @@ export default function AdvicePage() {
                         MansaMoney
                     </p>
                     <h1 className="text-3xl font-black px-2">Investment Advice</h1>
-                    <Link
-                        href="/home"
-                        className="inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition"
-                    >
-                        ← Back
-                    </Link>
+                    <div className="flex gap-3">
+                        <Link
+                            href="/home"
+                            className="inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition"
+                        >
+                            ← Back
+                        </Link>
+                        <Link
+                            href="/budget?edit=true&step=tracker"
+                            className="inline-flex items-center rounded-md bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition"
+                        >
+                            Edit Budget
+                        </Link>
+                    </div>
                 </header>
 
                 <Advice investments={investments} />

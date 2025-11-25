@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Enter(){
     const router = useRouter();
@@ -45,6 +46,12 @@ export default function Enter(){
                         MansaMoney
                     </p>
                     <h1 className="text-3xl font-black">Enter Monthly income</h1>
+                    <Link
+                        href="/home"
+                        className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
+                    >
+                        ← Back to Home
+                    </Link>
                 </header>
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">

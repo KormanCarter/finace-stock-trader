@@ -13,6 +13,38 @@ export default function Advice({ investments = 0 }) {
         setRemainingInvestment(Number(investments) || 0);
     }, [investments]);
 
+    // Check for new purchases and update remaining investment
+    useEffect(() => {
+        const updateRemainingBalance = () => {
+            const userRaw = localStorage.getItem("currentUser");
+            const currentUser = userRaw ? JSON.parse(userRaw) : null;
+            
+            if (currentUser) {
+                // Get all orders to calculate total spent
+                const storageKey = `mansamoneyOrders:${currentUser.email}`;
+                const ordersRaw = localStorage.getItem(storageKey);
+                const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+                
+                // Calculate total amount spent on all purchases
+                const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                
+                // Update remaining investment (original budget minus total spent)
+                const originalInvestment = Number(investments) || 0;
+                const newRemaining = originalInvestment - totalSpent;
+                
+                setRemainingInvestment(Math.max(0, newRemaining)); // Don't go below 0
+            }
+        };
+
+        // Initial update
+        updateRemainingBalance();
+
+        // Poll for changes every 2 seconds to catch purchases from other pages
+        const interval = setInterval(updateRemainingBalance, 2000);
+
+        return () => clearInterval(interval);
+    }, [investments]); // Re-run when investments prop changes
+
     const handleIndexFundSubmit = async () => {
         const amount = Number(indexfund) || 0;
         if (amount <= 0) {
