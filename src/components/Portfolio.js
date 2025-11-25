@@ -161,7 +161,7 @@ export default function Portfolio() {
                                                 <span className="ml-2 text-sm font-medium text-gray-500">{order.name}</span>
                                             </p>
                                             <span className="text-base font-medium text-emerald-600">
-                                                {order.shares.toFixed(2)} shares @ ${order.price.toFixed(2)}
+                                                {(order.shares != null ? order.shares.toFixed(2) : '0.00')} shares @ ${(order.price != null ? order.price.toFixed(2) : '0.00')}
                                             </span>
                                         </div>
 
@@ -169,11 +169,11 @@ export default function Portfolio() {
                                             <dl className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                                                 <div>
                                                     <dt className="text-gray-500">Shares</dt>
-                                                    <dd className="text-gray-900 font-semibold">{order.shares.toFixed(2)}</dd>
+                                                    <dd className="text-gray-900 font-semibold">{order.shares != null ? order.shares.toFixed(2) : '0.00'}</dd>
                                                 </div>
                                                 <div>
                                                     <dt className="text-gray-500">Purchase Price</dt>
-                                                    <dd className="text-gray-900 font-semibold">${order.price.toFixed(2)}</dd>
+                                                    <dd className="text-gray-900 font-semibold">${order.price != null ? order.price.toFixed(2) : '0.00'}</dd>
                                                 </div>
                                                 <div>
                                                     <dt className="text-gray-500">Current Price</dt>
@@ -187,7 +187,7 @@ export default function Portfolio() {
                                                 </div>
                                                 <div>
                                                     <dt className="text-gray-500">Total Invested</dt>
-                                                    <dd className="text-gray-900 font-semibold">${order.amount.toFixed(2)}</dd>
+                                                    <dd className="text-gray-900 font-semibold">${order.amount != null ? order.amount.toFixed(2) : '0.00'}</dd>
                                                 </div>
                                                 <div>
                                                     <dt className="text-gray-500">Current Value</dt>
