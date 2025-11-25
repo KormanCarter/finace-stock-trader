@@ -98,7 +98,7 @@ export default function BugetTracker(){
     }
 
     return (
-        <main className="min-h-screen bg-white px-6 py-12">
+        <main className="min-h-screen px-6 py-12">
             <section className="mx-auto max-w-5xl space-y-6">
                 <header>
                     <p className="text-xs uppercase tracking-[0.5em] text-gray-500">

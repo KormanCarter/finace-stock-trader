@@ -97,7 +97,7 @@ export default function Recommended() {
   }
 
   return (
-    <main className="min-h-screen bg-white px-6 py-12">
+    <main className="min-h-screen px-6 py-12">
       <section className="mx-auto max-w-5xl space-y-6">
         <header>
           <p className="text-xs uppercase tracking-[0.5em] text-gray-500">
@@ -131,7 +131,6 @@ export default function Recommended() {
                       ? `$${prices[stock.symbol].toFixed(2)}`
                       : "Price unavailable"}
                 </span>
-                <span className="text-xs text-gray-500">{stock.focus}</span>
               </div>
 
               <form

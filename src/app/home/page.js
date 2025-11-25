@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
     return (
-        <main className="bg-white text-black min-h-screen space-y-8 p-6">
+        <main className="text-black min-h-screen space-y-8 p-6">
             <header className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 px-6 py-10 text-white shadow-lg">
                 <p className="text-xs uppercase tracking-[0.4em] text-blue-200 text-center">Welcome to</p>
                 <h1 className="text-4xl font-black tracking-tight justify-center text-center">MansaMoney
