@@ -8,6 +8,7 @@ export default function Portfolio() {
     const [currentUser, setCurrentUser] = useState(null);
     const [prices, setPrices] = useState({});
     const [priceLoading, setPriceLoading] = useState(false);
+    const [remainingInvestment, setRemainingInvestment] = useState(0);
 
     useEffect(() => {
         const userRaw = localStorage.getItem("currentUser");
@@ -18,6 +19,23 @@ export default function Portfolio() {
         const ordersRaw = localStorage.getItem(storageKey);
         const userOrders = ordersRaw ? JSON.parse(ordersRaw) : [];
         setOrders(Array.isArray(userOrders) ? userOrders : []);
+
+        // Calculate remaining investment balance
+        if (user) {
+            const budgetKey = `mansamoneyBudget:${user.email}`;
+            const savedBudget = localStorage.getItem(budgetKey);
+            
+            if (savedBudget) {
+                const budgetData = JSON.parse(savedBudget);
+                const originalInvestment = Number(budgetData.investments) || 0;
+                
+                // Calculate total spent
+                const totalSpent = userOrders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                
+                // Set remaining investment
+                setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -85,12 +103,24 @@ export default function Portfolio() {
 
                 {!currentUser ? (
                     <p className="text-center text-gray-600">Please sign in to view your portfolio.</p>
-                ) : orders.length === 0 ? (
-                    <p className="text-center text-gray-600">You haven't purchased any stocks yet.</p>
                 ) : (
                     <>
-                        {/* 4 Stats Boxes */}
-                        {(() => {
+                        {/* Remaining Budget Box - Always Show */}
+                        <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-5 shadow-sm">
+                            <div className="flex flex-col gap-2">
+                                <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Amount Left to Invest</p>
+                                <p className="text-4xl font-bold text-amber-600">
+                                    ${remainingInvestment.toFixed(2)}
+                                </p>
+                            </div>
+                        </article>
+
+                        {orders.length === 0 ? (
+                            <p className="text-center text-gray-600">You haven't purchased any stocks yet.</p>
+                        ) : (
+                            <>
+                                {/* Portfolio Stats */}
+                                {(() => {
                             const totalInvested = orders.reduce((sum, order) => sum + order.amount, 0);
                             const totalCurrent = orders.reduce((sum, order) => {
                                 const currentPrice = prices[order.symbol];
@@ -136,6 +166,8 @@ export default function Portfolio() {
                                             </p>
                                         </div>
                                     </article>
+
+                                    
                                 </div>
                             );
                         })()}
@@ -219,8 +251,10 @@ export default function Portfolio() {
                                 );
                             })}
                         </div>
-                    </>
-                )}
+                        </>
+                    )}
+                </>
+            )}
             </section>
         </main>
     );

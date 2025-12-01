@@ -7,6 +7,36 @@ import indexFunds from "@/components/indexFunds";
 export default function IndexFundsPage() {
   const [prices, setPrices] = useState({});
   const [priceLoading, setPriceLoading] = useState(false);
+  const [remainingInvestment, setRemainingInvestment] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const userRaw = localStorage.getItem("currentUser");
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    setCurrentUser(user);
+
+    if (user) {
+      // Get original budget investment amount
+      const budgetKey = `mansamoneyBudget:${user.email}`;
+      const savedBudget = localStorage.getItem(budgetKey);
+      
+      if (savedBudget) {
+        const budgetData = JSON.parse(savedBudget);
+        const originalInvestment = Number(budgetData.investments) || 0;
+        
+        // Get all orders to calculate total spent
+        const storageKey = `mansamoneyOrders:${user.email}`;
+        const ordersRaw = localStorage.getItem(storageKey);
+        const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+        
+        // Calculate total amount spent on all purchases
+        const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+        
+        // Set remaining investment
+        setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,6 +75,12 @@ export default function IndexFundsPage() {
     const amount = Number(new FormData(event.currentTarget).get("amount") || 0);
     if (!amount || amount < 1) {
       alert("Enter a valid dollar amount.");
+      return;
+    }
+
+    // Check if user has enough budget remaining
+    if (amount > remainingInvestment) {
+      alert(`Insufficient budget. You have $${remainingInvestment.toFixed(2)} remaining.`);
       return;
     }
 
@@ -111,6 +147,18 @@ export default function IndexFundsPage() {
           </Link>
         </header>
 
+        {/* Remaining Budget Display */}
+        {currentUser && (
+          <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-5 shadow-sm">
+            <div className="flex flex-col gap-2">
+              <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Amount Left to Invest</p>
+              <p className="text-4xl font-bold text-amber-600">
+                ${remainingInvestment.toFixed(2)}
+              </p>
+            </div>
+          </article>
+        )}
+
         <div className="grid gap-4">
           {indexFunds.map((fund, index) => (
             <article
@@ -137,7 +185,7 @@ export default function IndexFundsPage() {
                 onSubmit={(event) => handleBuy(event, fund)}
               >
                 <div className="flex flex-1 items-center gap-3">
-                  <label htmlFor={`amount-${fund.symbol}`} className="text-sm font-medium text-gray-600 whitespace-nowrap">$ Amount</label>
+                  <label htmlFor={`amount-${fund.symbol}`} className="text-sm font-medium text-gray-600 whitespace-nowrap">$</label>
                   <input
                     id={`amount-${fund.symbol}`}
                     name="amount"

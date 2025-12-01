@@ -6,7 +6,7 @@ function formatPrice(value) {
     return typeof value === "number" && Number.isFinite(value) ? value.toFixed(2) : "—";
 }
 
-export default function Search() {
+export default function Search({ remainingBudget = 0 }) {
     const [symbol, setSymbol] = useState("");
     const [quote, setQuote] = useState(null);
     const [error, setError] = useState("");
@@ -120,6 +120,12 @@ export default function Search() {
         const amount = Number(new FormData(event.currentTarget).get("amount") || 0);
         if (!amount || amount < 1) {
             setError("Enter a valid dollar amount.");
+            return;
+        }
+
+        // Check if user has enough budget remaining
+        if (amount > remainingBudget) {
+            setError(`Insufficient budget. You have $${remainingBudget.toFixed(2)} remaining.`);
             return;
         }
 
