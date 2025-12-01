@@ -149,17 +149,16 @@ export default function Recommended() {
         </header>
 
         {/* Remaining Budget Display */}
-        {currentUser && (
-          <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-5 shadow-sm">
-            <div className="flex flex-col gap-2">
-              <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Amount Left to Invest</p>
-              <p className="text-4xl font-bold text-amber-600">
-                ${remainingInvestment.toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-600">From your budget allocation</p>
-            </div>
-          </article>
-        )}
+                {currentUser && (
+                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm uppercase tracking-[0.4em] text-green-600">Amount Left to Invest</p>
+                            <p className="text-4xl font-bold text-green-500">
+                                ${remainingInvestment.toFixed(2)}
+                            </p>
+                        </div>
+                    </article>
+                )}
 
         <div className="grid gap-4">
           {top25MarketCap.map((stock, index) => (

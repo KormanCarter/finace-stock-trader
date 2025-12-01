@@ -105,15 +105,17 @@ export default function Portfolio() {
                     <p className="text-center text-gray-600">Please sign in to view your portfolio.</p>
                 ) : (
                     <>
-                        {/* Remaining Budget Box - Always Show */}
-                        <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-5 shadow-sm">
-                            <div className="flex flex-col gap-2">
-                                <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Amount Left to Invest</p>
-                                <p className="text-4xl font-bold text-amber-600">
-                                    ${remainingInvestment.toFixed(2)}
-                                </p>
-                            </div>
-                        </article>
+                       {/* Remaining Budget Display */}
+                {currentUser && (
+                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm uppercase tracking-[0.4em] text-green-600">Amount Left to Invest</p>
+                            <p className="text-4xl font-bold text-green-500">
+                                ${remainingInvestment.toFixed(2)}
+                            </p>
+                        </div>
+                    </article>
+                )}
 
                         {orders.length === 0 ? (
                             <p className="text-center text-gray-600">You haven't purchased any stocks yet.</p>
@@ -131,37 +133,37 @@ export default function Portfolio() {
 
                             return (
                                 <div className="grid grid-cols-4 gap-4 mb-6">
-                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-4 shadow-sm">
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-white to-black px-5 py-4 shadow-sm">
                                         <div className="flex flex-col gap-1">
-                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Total Invested</p>
-                                            <p className="text-2xl font-bold text-emerald-600">
+                                            <p className="text-xs uppercase tracking-[0.4em] text-white font-bold" style={{textShadow: '-1px -1px 0 #141313ff, 1px -1px 0 #121212ff, -1px 1px 0 #050404ff, 1px 1px 0 #121212ff'}}>Total Invested</p>
+                                            <p className="text-2xl font-bold text-white" style={{textShadow: '-1px -1px 0 #141313ff, 1px -1px 0 #121212ff, -1px 1px 0 #050404ff, 1px 1px 0 #121212ff'}}>
                                                 ${totalInvested.toFixed(2)}
                                             </p>
                                         </div>
                                     </article>
 
-                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-4 shadow-sm">
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-500 px-5 py-4 shadow-sm" style={{textShadow: '-1px -1px 0 #141313ff, 1px -1px 0 #121212ff, -1px 1px 0 #050404ff, 1px 1px 0 #121212ff'}}>
                                         <div className="flex flex-col gap-1">
-                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Current Value</p>
+                                            <p className="text-xs uppercase tracking-[0.4em] text-blue-600 font-bold">Current Value</p>
                                             <p className="text-2xl font-bold text-blue-600">
                                                 ${totalCurrent.toFixed(2)}
                                             </p>
                                         </div>
                                     </article>
 
-                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 px-5 py-4 shadow-sm">
+                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-50 to-pink-500 px-5 py-4 shadow-sm" style={{textShadow: '-1px -1px 0 #141313ff, 1px -1px 0 #121212ff, -1px 1px 0 #050404ff, 1px 1px 0 #121212ff'}}>
                                         <div className="flex flex-col gap-1">
-                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Total Gain/Loss</p>
+                                            <p className="text-xs uppercase tracking-[0.4em] text-purple-600 text-bold">Total Gain/Loss</p>
                                             <p className={`text-2xl font-bold ${totalGain >= 0 ? 'text-purple-600' : 'text-red-600'}`}>
                                                 ${totalGain.toFixed(2)}
                                             </p>
                                         </div>
                                     </article>
 
-                                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-orange-50 to-red-50 px-5 py-4 shadow-sm">
+                                    <article className={`rounded-2xl border border-gray-200 px-5 py-4 shadow-sm ${totalGainPercent >= 0 ? 'bg-gradient-to-r from-green-50 to-green-500' : 'bg-gradient-to-r from-red-50 to-pink-50'}`} style={{textShadow: '-1px -1px 0 #141313ff, 1px -1px 0 #121212ff, -1px 1px 0 #050404ff, 1px 1px 0 #121212ff'}}>
                                         <div className="flex flex-col gap-1">
-                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Return %</p>
-                                            <p className={`text-2xl font-bold ${totalGainPercent >= 0 ? 'text-orange-600' : 'text-red-600'}`}>
+                                            <p className="text-xs uppercase tracking-[0.4em] text-emerald-700 text-bold">Return %</p>
+                                            <p className={`text-2xl font-bold ${totalGainPercent >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
                                                 {totalGainPercent.toFixed(2)}%
                                             </p>
                                         </div>
