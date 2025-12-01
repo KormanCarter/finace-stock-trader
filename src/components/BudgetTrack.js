@@ -16,6 +16,8 @@ export default function BugetTracker(){
     const [Sports, setSports] = useState('')
     const [other, setOthers] = useState('')
     const [showRecommended, setShowRecommended] = useState(true)
+    const [currentUser, setCurrentUser] = useState(null)
+    const [remainingInvestment, setRemainingInvestment] = useState(0)
 
     // Derived remaining balance updates automatically when any dependency changes
     const remainingBalance = (Number(income) || 0)
@@ -31,10 +33,11 @@ export default function BugetTracker(){
     useEffect(() => {
         // Load income from localStorage
         const userRaw = localStorage.getItem("currentUser");
-        const currentUser = userRaw ? JSON.parse(userRaw) : null;
+        const user = userRaw ? JSON.parse(userRaw) : null;
+        setCurrentUser(user);
         
-        if (currentUser) {
-            const storageKey = `mansamoneyAmount:${currentUser.email}`;
+        if (user) {
+            const storageKey = `mansamoneyAmount:${user.email}`;
             const savedIncome = localStorage.getItem(storageKey);
             if (savedIncome) {
                 setIncome(savedIncome);
@@ -46,6 +49,26 @@ export default function BugetTracker(){
                 setCarPayment((incomeNum * 0.10).toFixed(2));
                 setGroceries((incomeNum * 0.10).toFixed(2));
                 setInvestments((incomeNum * 0.08).toFixed(2));
+            }
+
+            // Calculate remaining investment amount
+            const budgetKey = `mansamoneyBudget:${user.email}`;
+            const savedBudget = localStorage.getItem(budgetKey);
+            
+            if (savedBudget) {
+                const budgetData = JSON.parse(savedBudget);
+                const originalInvestment = Number(budgetData.investments) || 0;
+                
+                // Get all orders to calculate total spent
+                const ordersStorageKey = `mansamoneyOrders:${user.email}`;
+                const ordersRaw = localStorage.getItem(ordersStorageKey);
+                const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+                
+                // Calculate total amount spent on all purchases
+                const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                
+                // Set remaining investment
+                setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
             }
         }
     }, [])
@@ -113,14 +136,7 @@ export default function BugetTracker(){
                     </Link>
                 </header>
 
-                {income && (
-                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50 px-5 py-4 shadow-sm">
-                        <div className="flex flex-col gap-1">
-                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Remaining Balance</p>
-                            <p className={`text-2xl font-bold ${remainingBalance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{remainingBalance.toFixed(2)}</p>
-                        </div>
-                    </article>
-                )}
+                
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
                     <div className="flex justify-between items-center mb-4">

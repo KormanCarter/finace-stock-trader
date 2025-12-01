@@ -7,16 +7,18 @@ export default function Advice({ investments = 0 }) {
     const [indexfund, setIndexFund] = useState("")
     const [topSeven, setTopSeven] = useState("")
     const [remainingInvestment, setRemainingInvestment] = useState(0)
+    const [currentUser, setCurrentUser] = useState(null)
 
     // Load initial budget data and calculate remaining investment
     useEffect(() => {
         const loadInitialData = () => {
             const userRaw = localStorage.getItem("currentUser");
-            const currentUser = userRaw ? JSON.parse(userRaw) : null;
+            const user = userRaw ? JSON.parse(userRaw) : null;
+            setCurrentUser(user);
             
-            if (currentUser) {
+            if (user) {
                 // Get original budget investment amount
-                const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+                const budgetKey = `mansamoneyBudget:${user.email}`;
                 const savedBudget = localStorage.getItem(budgetKey);
                 
                 if (savedBudget) {
@@ -24,7 +26,7 @@ export default function Advice({ investments = 0 }) {
                     const originalInvestment = Number(budgetData.investments) || 0;
                     
                     // Get all orders to calculate total spent
-                    const storageKey = `mansamoneyOrders:${currentUser.email}`;
+                    const storageKey = `mansamoneyOrders:${user.email}`;
                     const ordersRaw = localStorage.getItem(storageKey);
                     const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
                     
@@ -49,11 +51,11 @@ export default function Advice({ investments = 0 }) {
     useEffect(() => {
         const updateRemainingBalance = () => {
             const userRaw = localStorage.getItem("currentUser");
-            const currentUser = userRaw ? JSON.parse(userRaw) : null;
+            const user = userRaw ? JSON.parse(userRaw) : null;
             
-            if (currentUser) {
+            if (user) {
                 // Get original budget investment amount
-                const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+                const budgetKey = `mansamoneyBudget:${user.email}`;
                 const savedBudget = localStorage.getItem(budgetKey);
                 
                 if (savedBudget) {
@@ -61,7 +63,7 @@ export default function Advice({ investments = 0 }) {
                     const originalInvestment = Number(budgetData.investments) || 0;
                     
                     // Get all orders to calculate total spent
-                    const storageKey = `mansamoneyOrders:${currentUser.email}`;
+                    const storageKey = `mansamoneyOrders:${user.email}`;
                     const ordersRaw = localStorage.getItem(storageKey);
                     const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
                     
@@ -222,15 +224,17 @@ export default function Advice({ investments = 0 }) {
     return (
         <main className="min-h-screen">
             <section className="mx-auto max-w-7xl space-y-6 px-6">
-                {/* Amount Left to Invest */}
-                <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-5 py-4 shadow-sm">
-                    <div className="flex flex-col gap-1">
-                        <p className="text-xs uppercase tracking-[0.4em] text-gray-400">Amount Left to Invest</p>
-                        <p className="text-3xl font-bold text-blue-600">
-                            ${remainingInvestment != null && !isNaN(remainingInvestment) ? remainingInvestment.toFixed(2) : '0.00'}
-                        </p>
-                    </div>
-                </article>
+                 {/* Remaining Budget Display */}
+                {currentUser && (
+                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm uppercase tracking-[0.4em] text-green-600">Amount Left to Invest</p>
+                            <p className="text-4xl font-bold text-green-500">
+                                ${remainingInvestment.toFixed(2)}
+                            </p>
+                        </div>
+                    </article>
+                )}
 
                 <div className="grid grid-cols-3 gap-4">
                     {/* Portfolio Image Card */}
@@ -265,7 +269,7 @@ export default function Advice({ investments = 0 }) {
                                     <button 
                                         onClick={handleIndexFundSubmit}
                                         className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/40 transition [background-size:200%_100%] hover:[background-position:100%_0] hover:shadow-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 active:scale-[0.97]">
-                                        <span className="relative z-10">Submit</span>
+                                        <span className="relative z-10">Buy</span>
                                     </button>
                                 </div>
                         </div>
@@ -297,7 +301,7 @@ export default function Advice({ investments = 0 }) {
                                     <button 
                                         onClick={handleTopSevenSubmit}
                                         className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/40 transition [background-size:200%_100%] hover:[background-position:100%_0] hover:shadow-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 active:scale-[0.97]">
-                                        <span className="relative z-10">Submit</span>
+                                        <span className="relative z-10">Buy</span>
                                     </button>
                                 </div>
                             </div>
