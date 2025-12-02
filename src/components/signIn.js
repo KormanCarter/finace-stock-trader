@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from './AuthContext'
 
 export default function SignIn({ onSwitch }) {
   const router = useRouter()
+  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -43,6 +45,9 @@ export default function SignIn({ onSwitch }) {
         'currentUser',
         JSON.stringify({ fullName: user.fullName, email: user.email, signedInAt: new Date().toISOString() })
       )
+
+      // Use AuthContext login
+      login({ fullName: user.fullName, email: user.email, signedInAt: new Date().toISOString() })
 
       console.log('Sign in successful — email:', email)
       router.push('/home')

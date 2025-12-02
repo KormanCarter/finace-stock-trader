@@ -153,6 +153,22 @@ export default function Search({ remainingBudget = 0 }) {
             const existing = existingRaw ? JSON.parse(existingRaw) : [];
             const nextOrders = Array.isArray(existing) ? [...existing, purchase] : [purchase];
             localStorage.setItem(storageKey, JSON.stringify(nextOrders));
+
+            // Update availableInvestment in budget
+            if (currentUser?.email) {
+                const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    // Reduce availableInvestment by the purchase amount
+                    const currentAvailable = Number(budgetData.availableInvestment) || Number(budgetData.investments) || 0;
+                    budgetData.availableInvestment = Math.max(0, currentAvailable - amount);
+                    localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+                }
+            }
+
+            // Refresh the page to update the remaining budget display
+            window.location.reload();
         } catch (storageError) {
             console.error("Failed to persist order", storageError);
             setError("Failed to save order.");

@@ -23,18 +23,25 @@ export default function Recommended() {
       
       if (savedBudget) {
         const budgetData = JSON.parse(savedBudget);
-        const originalInvestment = Number(budgetData.investments) || 0;
         
-        // Get all orders to calculate total spent
-        const storageKey = `mansamoneyOrders:${user.email}`;
-        const ordersRaw = localStorage.getItem(storageKey);
-        const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
-        
-        // Calculate total amount spent on all purchases
-        const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+        let remaining;
+        // Use availableInvestment if it exists (already accounts for sales), otherwise calculate from original budget
+        if (budgetData.availableInvestment !== undefined) {
+          remaining = Math.max(0, Number(budgetData.availableInvestment) || 0);
+        } else {
+          const originalInvestment = Number(budgetData.investments) || 0;
+          // Get all orders to calculate total spent
+          const storageKey = `mansamoneyOrders:${user.email}`;
+          const ordersRaw = localStorage.getItem(storageKey);
+          const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+          
+          // Calculate total amount spent on all purchases
+          const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+          remaining = Math.max(0, originalInvestment - totalSpent);
+        }
         
         // Set remaining investment
-        setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+        setRemainingInvestment(remaining);
       }
     }
   }, []);
@@ -51,7 +58,7 @@ export default function Recommended() {
               console.log(`✓ Loaded ${stock.symbol}: $${price}`);
               return [stock.symbol, price];
             } catch (err) {
-              console.error(`✗ Failed ${stock.symbol}: ${err.message}`);
+              console.log('Failed to load price for', stock.symbol);
               return [stock.symbol, null];
             }
           })
@@ -110,6 +117,22 @@ export default function Recommended() {
           const existing = existingRaw ? JSON.parse(existingRaw) : [];
           const nextOrders = Array.isArray(existing) ? [...existing, purchase] : [purchase];
           localStorage.setItem(storageKey, JSON.stringify(nextOrders));
+
+          // Update availableInvestment in budget
+          if (currentUser?.email) {
+            const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+            const savedBudget = localStorage.getItem(budgetKey);
+            if (savedBudget) {
+              const budgetData = JSON.parse(savedBudget);
+              // Reduce availableInvestment by the purchase amount
+              const currentAvailable = Number(budgetData.availableInvestment) || Number(budgetData.investments) || 0;
+              budgetData.availableInvestment = Math.max(0, currentAvailable - amount);
+              localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+            }
+          }
+
+          // Refresh the page to update the remaining budget display
+          window.location.reload();
         } catch (storageError) {
           console.error("Failed to persist order", storageError);
         }
@@ -127,7 +150,7 @@ export default function Recommended() {
       if (typeof data.c !== "number") throw new Error("Missing price data");
       return data.c;
     } catch (err) {
-      console.error(`fetchQuote(${symbol}):`, err.message);
+      console.log('fetchQuote error for symbol:', symbol, 'error:', err);
       throw err;
     }
   }
@@ -148,19 +171,25 @@ export default function Recommended() {
           </Link>
         </header>
 
-        {/* Remaining Budget Display */}
+                {/* Remaining Budget Display */}
                 {currentUser && (
-                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
-                            <p className="text-sm uppercase tracking-[0.4em] text-green-600">Amount Left to Invest</p>
-                            <p className="text-4xl font-bold text-green-500">
-                                ${remainingInvestment.toFixed(2)}
-                            </p>
+                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-300 to-blue-500 px-6 py-5 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-2">
+                                <p className={`text-sm uppercase tracking-[0.4em] ${remainingInvestment > 1000 ? 'text-green-600' : remainingInvestment > 500 ? 'text-yellow-600' : 'text-red-600'}`}>Amount Left to Invest</p>
+                                <p className={`text-4xl font-bold ${remainingInvestment > 1000 ? 'text-green-500' : remainingInvestment > 500 ? 'text-yellow-500' : 'text-red-500'}`}>
+                                    ${remainingInvestment.toFixed(2)}
+                                </p>
+                            </div>
+                            <Link 
+                                href="/budget?edit=true&step=tracker&returnTo=/Recommended"
+                                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                            >
+                                Edit Budget
+                            </Link>
                         </div>
                     </article>
-                )}
-
-        <div className="grid gap-4">
+                )}        <div className="grid gap-4">
           {top25MarketCap.map((stock, index) => (
             <article
               key={stock.symbol}

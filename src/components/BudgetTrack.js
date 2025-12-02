@@ -8,6 +8,7 @@ export default function BugetTracker(){
     const router = useRouter()
     const searchParams = useSearchParams()
     const isEditMode = searchParams.get('edit') === 'true'
+    const returnTo = searchParams.get('returnTo') || '/dashboard'
     const [income, setIncome] = useState('')
     const [housing, setHousing] = useState('')
     const [food, setFood] = useState('')
@@ -106,16 +107,34 @@ export default function BugetTracker(){
             investments: Number(investments) || 0,
             other: Number(other) || 0,
             sports: Number(sports) || 0,
+            // Initialize availableInvestment to the same as investments if not in edit mode
+            availableInvestment: isEditMode ? undefined : Number(investments) || 0,
             timestamp: new Date().toISOString()
+        }
+        
+        // If editing, preserve the existing availableInvestment value
+        if (isEditMode) {
+            const currentBudgetKey = `mansamoneyBudget:${currentUser.email}`;
+            const currentBudget = localStorage.getItem(currentBudgetKey);
+            if (currentBudget) {
+                const currentBudgetData = JSON.parse(currentBudget);
+                budgetData.availableInvestment = currentBudgetData.availableInvestment || Number(investments) || 0;
+            }
         }
         
         
         const storageKey = `mansamoneyBudget:${currentUser.email}`;
         localStorage.setItem(storageKey, JSON.stringify(budgetData));
         
+        // If in edit mode, also save the updated income
+        if (isEditMode && income) {
+            const incomeStorageKey = `mansamoneyAmount:${currentUser.email}`;
+            localStorage.setItem(incomeStorageKey, income);
+        }
+        
         if (isEditMode) {
             alert("Budget updated successfully!");
-            router.push('/dashboard');
+            router.push(returnTo);
         } else {
             router.push('/advice');
         }
@@ -133,10 +152,10 @@ export default function BugetTracker(){
                     </h1>
                     {isEditMode ? (
                         <Link
-                            href="/dashboard"
+                            href={returnTo}
                             className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
                         >
-                            ← Back to Dashboard
+                            ← Back to {returnTo === '/portfolio' ? 'Portfolio' : 'Dashboard'}
                         </Link>
                     ) : (
                         <Link
@@ -172,7 +191,31 @@ export default function BugetTracker(){
                     </article>
                 )}
 
-
+                {/* Income Editing Section - Only show in edit mode */}
+                {isEditMode && (
+                    <article className="rounded-2xl border border-gray-200 bg-blue-50 px-5 py-4 shadow-sm">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold text-gray-800">Monthly Income</h2>
+                            <p className="text-sm text-gray-600">Update your monthly income amount</p>
+                        </div>
+                        <div className="max-w-md">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Income</label>
+                            <div className="flex items-center">
+                                <span className="text-gray-600">$</span>
+                                <input 
+                                    type="number" 
+                                    value={income}
+                                    onChange={(e) => setIncome(e.target.value)}
+                                    className="flex-1 ml-2 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                                    placeholder="0.00"
+                                    min="0"
+                                    step="0.01"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">This will update your recommended budget amounts</p>
+                        </div>
+                    </article>
+                )}
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
                     <div className="flex justify-between items-center mb-4">

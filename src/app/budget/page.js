@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Enter from "@/components/Enter";
 import BugetTracker from "@/components/BudgetTrack";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function BudgetPage() {
     const searchParams = useSearchParams();
@@ -32,8 +33,10 @@ export default function BudgetPage() {
     }, [router, searchParams]);
     
     return (
-       <main>
-        {step === "tracker" ? <BugetTracker /> : <Enter />}
-       </main>
+        <ProtectedRoute>
+            <main>
+                {step === "tracker" ? <BugetTracker /> : <Enter />}
+            </main>
+        </ProtectedRoute>
     );
 }

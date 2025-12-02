@@ -315,7 +315,7 @@ export default function Dashboard() {
                     <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Link
-                            href="/budget"
+                            href="/budget?edit=true&step=tracker&returnTo=/dashboard"
                             className="flex flex-col items-center justify-center bg-cover rounded-lg p-6 hover:shadow-md transition text-center relative overflow-hidden min-h-32"
                             style={{ backgroundImage: "url('/budget.jpg')", backgroundPosition: '50% 20%' }}
                         >

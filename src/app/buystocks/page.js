@@ -20,18 +20,25 @@ export default function BuyStocksPage() {
             
             if (savedBudget) {
                 const budgetData = JSON.parse(savedBudget);
-                const originalInvestment = Number(budgetData.investments) || 0;
                 
-                // Get all orders to calculate total spent
-                const storageKey = `mansamoneyOrders:${user.email}`;
-                const ordersRaw = localStorage.getItem(storageKey);
-                const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
-                
-                // Calculate total amount spent on all purchases
-                const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                let remaining;
+                // Use availableInvestment if it exists (already accounts for sales), otherwise calculate from original budget
+                if (budgetData.availableInvestment !== undefined) {
+                    remaining = Math.max(0, Number(budgetData.availableInvestment) || 0);
+                } else {
+                    const originalInvestment = Number(budgetData.investments) || 0;
+                    // Get all orders to calculate total spent
+                    const storageKey = `mansamoneyOrders:${user.email}`;
+                    const ordersRaw = localStorage.getItem(storageKey);
+                    const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+                    
+                    // Calculate total amount spent on all purchases
+                    const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                    remaining = Math.max(0, originalInvestment - totalSpent);
+                }
                 
                 // Set remaining investment
-                setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+                setRemainingInvestment(remaining);
             }
         }
     }, []);
@@ -54,12 +61,20 @@ export default function BuyStocksPage() {
                 
                 {/* Remaining Budget Display */}
                 {currentUser && (
-                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
-                            <p className="text-sm uppercase tracking-[0.4em] text-green-600">Amount Left to Invest</p>
-                            <p className="text-4xl font-bold text-green-500">
-                                ${remainingInvestment.toFixed(2)}
-                            </p>
+                    <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-300 to-blue-500 px-6 py-5 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-2">
+                                <p className={`text-sm uppercase tracking-[0.4em] ${remainingInvestment > 1000 ? 'text-green-600' : remainingInvestment > 500 ? 'text-yellow-600' : 'text-red-600'}`}>Amount Left to Invest</p>
+                                <p className={`text-4xl font-bold ${remainingInvestment > 1000 ? 'text-green-500' : remainingInvestment > 500 ? 'text-yellow-500' : 'text-red-500'}`}>
+                                    ${remainingInvestment.toFixed(2)}
+                                </p>
+                            </div>
+                            <Link 
+                                href="/budget?edit=true&step=tracker&returnTo=/buystocks"
+                                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                            >
+                                Edit Budget
+                            </Link>
                         </div>
                     </article>
                 )}

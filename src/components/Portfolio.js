@@ -27,13 +27,14 @@ export default function Portfolio() {
             
             if (savedBudget) {
                 const budgetData = JSON.parse(savedBudget);
-                const originalInvestment = Number(budgetData.investments) || 0;
-                
-                // Calculate total spent
-                const totalSpent = userOrders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
-                
-                // Set remaining investment
-                setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+                // Use availableInvestment if it exists (already accounts for sales), otherwise calculate from original budget
+                if (budgetData.availableInvestment !== undefined) {
+                    setRemainingInvestment(Math.max(0, Number(budgetData.availableInvestment) || 0));
+                } else {
+                    const originalInvestment = Number(budgetData.investments) || 0;
+                    const totalSpent = userOrders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
+                    setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+                }
             }
         }
     }, []);
@@ -133,6 +134,22 @@ export default function Portfolio() {
             localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
             setOrders(updatedOrders);
             
+            // Add sale proceeds back to available investment funds
+            if (user) {
+                const budgetKey = `mansamoneyBudget:${user.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    // Simply add sale proceeds to current availableInvestment
+                    const currentAvailable = Number(budgetData.availableInvestment) || 0;
+                    budgetData.availableInvestment = currentAvailable + dollarAmount;
+                    localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+                    
+                    // Update the local state to reflect the change
+                    setRemainingInvestment(budgetData.availableInvestment);
+                }
+            }
+            
             alert(`Successfully sold $${dollarAmount.toFixed(2)} worth of ${order.symbol} (${sharesToSell.toFixed(2)} shares)`);
         }
     };
@@ -156,6 +173,22 @@ export default function Portfolio() {
             
             localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
             setOrders(updatedOrders);
+            
+            // Add sale proceeds back to available investment funds
+            if (user) {
+                const budgetKey = `mansamoneyBudget:${user.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    // Simply add sale proceeds to current availableInvestment
+                    const currentAvailable = Number(budgetData.availableInvestment) || 0;
+                    budgetData.availableInvestment = currentAvailable + currentValue;
+                    localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+                    
+                    // Update the local state to reflect the change
+                    setRemainingInvestment(budgetData.availableInvestment);
+                }
+            }
             
             alert(`Successfully sold all ${order.shares.toFixed(2)} shares of ${order.symbol} for $${currentValue.toFixed(2)}`);
         }
@@ -182,7 +215,7 @@ export default function Portfolio() {
                 ) : (
                     <>
                         {/* Remaining Budget Display - Always show when user is signed in */}
-                        <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-yellow-500 to-amber-300 px-6 py-5 shadow-sm">
+                        <article className="rounded-2xl border border-gray-200 bg-gradient-to-r from-purple-300 to-blue-500 px-6 py-5 shadow-sm">
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col gap-2">
                                     <p className={`text-sm uppercase tracking-[0.4em] ${remainingInvestment > 1000 ? 'text-green-600' : remainingInvestment > 500 ? 'text-yellow-600' : 'text-red-600'}`}>Amount Left to Invest</p>
@@ -191,7 +224,7 @@ export default function Portfolio() {
                                     </p>
                                 </div>
                                 <Link 
-                                    href="/budget?edit=true&step=tracker"
+                                    href="/budget?edit=true&step=tracker&returnTo=/portfolio"
                                     className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                 >
                                     Edit Budget

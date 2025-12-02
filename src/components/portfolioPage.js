@@ -32,7 +32,7 @@ export default function PortfolioPage() {
                             const price = await fetchQuote(order.symbol);
                             return [order.symbol, price];
                         } catch (err) {
-                            console.error(`Failed to fetch ${order.symbol}:`, err.message);
+                            console.log('Failed to fetch price for', order.symbol);
                             return [order.symbol, null];
                         }
                     })

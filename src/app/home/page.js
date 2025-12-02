@@ -2,20 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuth } from "@/components/AuthContext";
 
 export default function Home() {
     const router = useRouter();
+    const { logout } = useAuth();
 
     const handleSignOut = () => {
-        // Clear user session data
-        localStorage.removeItem("currentUser");
+        // Clear user session data using AuthContext
+        logout();
         // Redirect to signin page
         router.push("/");
     };
 
     return (
-        <main className="text-black min-h-screen space-y-8 p-6">
-            <header className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-r from-blue-900 via-blue-700 to-blue-200 px-6 py-10 text-white shadow-lg">
+        <ProtectedRoute>
+            <main className="text-black min-h-screen space-y-8 p-6">
+            <header className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-green-400 px-6 py-10 text-white shadow-lg">
                 <div className="flex justify-between items-start">
                     <div className="flex-1 text-center">
                         <p className="text-xs uppercase tracking-[0.4em] text-blue-200">Welcome to</p>
@@ -54,6 +58,7 @@ export default function Home() {
                     </Link>
                 </div>
             </section>
-        </main>
+            </main>
+        </ProtectedRoute>
     );
 }
