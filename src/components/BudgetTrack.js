@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function BugetTracker(){
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const isEditMode = searchParams.get('edit') === 'true'
     const [income, setIncome] = useState('')
     const [housing, setHousing] = useState('')
     const [food, setFood] = useState('')
@@ -13,11 +15,10 @@ export default function BugetTracker(){
     const [carPayment, setCarPayment] = useState('')
     const [groceries, setGroceries] = useState('')
     const [investments, setInvestments] = useState('')
-    const [Sports, setSports] = useState('')
+    const [sports, setSports] = useState('')
     const [other, setOthers] = useState('')
     const [showRecommended, setShowRecommended] = useState(true)
     const [currentUser, setCurrentUser] = useState(null)
-    const [remainingInvestment, setRemainingInvestment] = useState(0)
 
     // Derived remaining balance updates automatically when any dependency changes
     const remainingBalance = (Number(income) || 0)
@@ -28,10 +29,9 @@ export default function BugetTracker(){
         + (Number(groceries) || 0)
         + (Number(investments) || 0)
         + (Number(other) || 0)
-        + (Number(Sports) || 0));
+        + (Number(sports) || 0));
 
     useEffect(() => {
-        // Load income from localStorage
         const userRaw = localStorage.getItem("currentUser");
         const user = userRaw ? JSON.parse(userRaw) : null;
         setCurrentUser(user);
@@ -41,48 +41,46 @@ export default function BugetTracker(){
             const savedIncome = localStorage.getItem(storageKey);
             if (savedIncome) {
                 setIncome(savedIncome);
-                // Set recommended amounts
-                const incomeNum = Number(savedIncome);
-                setHousing((incomeNum * 0.30).toFixed(2));
-                setFood((incomeNum * 0.12).toFixed(2));
-                setSavings((incomeNum * 0.20).toFixed(2));
-                setCarPayment((incomeNum * 0.10).toFixed(2));
-                setGroceries((incomeNum * 0.10).toFixed(2));
-                setInvestments((incomeNum * 0.08).toFixed(2));
             }
 
-            // Calculate remaining investment amount
-            const budgetKey = `mansamoneyBudget:${user.email}`;
-            const savedBudget = localStorage.getItem(budgetKey);
-            
-            if (savedBudget) {
-                const budgetData = JSON.parse(savedBudget);
-                const originalInvestment = Number(budgetData.investments) || 0;
-                
-                // Get all orders to calculate total spent
-                const ordersStorageKey = `mansamoneyOrders:${user.email}`;
-                const ordersRaw = localStorage.getItem(ordersStorageKey);
-                const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
-                
-                // Calculate total amount spent on all purchases
-                const totalSpent = orders.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
-                
-                // Set remaining investment
-                setRemainingInvestment(Math.max(0, originalInvestment - totalSpent));
+            // Load existing budget data if in edit mode
+            if (isEditMode) {
+                const budgetKey = `mansamoneyBudget:${user.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    setHousing(budgetData.housing?.toString() || '');
+                    setFood(budgetData.food?.toString() || '');
+                    setSavings(budgetData.savings?.toString() || '');
+                    setCarPayment(budgetData.carPayment?.toString() || '');
+                    setGroceries(budgetData.groceries?.toString() || '');
+                    setInvestments(budgetData.investments?.toString() || '');
+                    setSports(budgetData.sports?.toString() || '');
+                    setOthers(budgetData.other?.toString() || '');
+                }
+            } else {
+                // Set recommended amounts for new budget
+                const incomeNum = Number(savedIncome);
+                if (savedIncome) {
+                    setHousing((incomeNum * 0.30).toFixed(2));
+                    setFood((incomeNum * 0.12).toFixed(2));
+                    setSavings((incomeNum * 0.20).toFixed(2));
+                    setCarPayment((incomeNum * 0.10).toFixed(2));
+                    setGroceries((incomeNum * 0.10).toFixed(2));
+                    setInvestments((incomeNum * 0.08).toFixed(2));
+                }
             }
         }
-    }, [])
+    }, [isEditMode])
 
     const handleSubmit = (e) => {
         e.preventDefault()
         
-        // Check if at least one field is filled
         if (!housing && !food && !savings && !carPayment && !groceries && !investments) {
             alert("Please fill out at all of the categories");
             return;
         }
         
-        // Get current user from localStorage
         const userRaw = localStorage.getItem("currentUser");
         const currentUser = userRaw ? JSON.parse(userRaw) : null;
         
@@ -91,11 +89,9 @@ export default function BugetTracker(){
             return;
         }
         
-        // Calculate remaining balance
-        const totalExpenses = (Number(housing) || 0) + (Number(food) || 0) + (Number(savings) || 0) + (Number(carPayment) || 0) + (Number(groceries) || 0) + (Number(investments) || 0) + (Number(other) || 0) + (Number(Sports) || 0);
+        const totalExpenses = (Number(housing) || 0) + (Number(food) || 0) + (Number(savings) || 0) + (Number(carPayment) || 0) + (Number(groceries) || 0) + (Number(investments) || 0) + (Number(other) || 0) + (Number(sports) || 0);
         const remainingBalance = Number(income) - totalExpenses;
         
-        // Check if remaining balance is negative
         if (remainingBalance < 0) {
             alert(`Way to much their pal your not rich enough for that!`);
             return;
@@ -109,7 +105,7 @@ export default function BugetTracker(){
             groceries: Number(groceries) || 0,
             investments: Number(investments) || 0,
             other: Number(other) || 0,
-            Sports: Number(Sports) || 0,
+            sports: Number(sports) || 0,
             timestamp: new Date().toISOString()
         }
         
@@ -117,7 +113,12 @@ export default function BugetTracker(){
         const storageKey = `mansamoneyBudget:${currentUser.email}`;
         localStorage.setItem(storageKey, JSON.stringify(budgetData));
         
-        router.push('/advice');
+        if (isEditMode) {
+            alert("Budget updated successfully!");
+            router.push('/dashboard');
+        } else {
+            router.push('/advice');
+        }
     }
 
     return (
@@ -127,13 +128,24 @@ export default function BugetTracker(){
                     <p className="text-xs uppercase tracking-[0.5em] text-gray-500">
                         MansaMoney
                     </p>
-                    <h1 className="text-3xl font-black">Budget Tracker</h1>
-                    <Link
-                        href="/budget?edit=true"
-                        className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
-                    >
-                        ← Back to Income Entry
-                    </Link>
+                    <h1 className="text-3xl font-black">
+                        {isEditMode ? 'Edit Budget' : 'Budget Tracker'}
+                    </h1>
+                    {isEditMode ? (
+                        <Link
+                            href="/dashboard"
+                            className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
+                        >
+                            ← Back to Dashboard
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/budget"
+                            className="mt-3 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-500"
+                        >
+                            ← Back to Income Entry
+                        </Link>
+                    )}
                 </header>
 
                 {/* Remaining Budget Balance Display */}
@@ -159,6 +171,8 @@ export default function BugetTracker(){
                         </div>
                     </article>
                 )}
+
+
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
@@ -305,7 +319,7 @@ export default function BugetTracker(){
                                     <span className="text-gray-600">$</span>
                                     <input 
                                         type="number" 
-                                        value={Sports}
+                                        value={sports}
                                         onChange={(e) => setSports(e.target.value)}
                                         className="flex-1 ml-2 rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                                         placeholder="0.00"
@@ -330,7 +344,7 @@ export default function BugetTracker(){
                             type="submit"
                             className="w-full mt-6 rounded-lg bg-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-emerald-500"
                         >
-                            Save Budget
+                            {isEditMode ? 'Update Budget' : 'Save Budget'}
                         </button>
                     </form>
                 </article>

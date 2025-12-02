@@ -137,6 +137,30 @@ export default function Portfolio() {
         }
     };
 
+    const handleSellAll = (orderIndex, order) => {
+        const currentPrice = prices[order.symbol];
+        if (!currentPrice) {
+            alert("Unable to get current price. Please try again.");
+            return;
+        }
+        
+        const currentValue = currentPrice * order.shares;
+        
+        if (confirm(`Sell ALL ${order.shares.toFixed(2)} shares of ${order.symbol} for $${currentValue.toFixed(2)}?`)) {
+            const userRaw = localStorage.getItem("currentUser");
+            const user = userRaw ? JSON.parse(userRaw) : null;
+            const storageKey = user?.email ? `mansamoneyOrders:${user.email}` : "mansamoneyOrders:guest";
+            
+            const updatedOrders = [...orders];
+            updatedOrders.splice(orderIndex, 1); // Remove the entire order
+            
+            localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
+            setOrders(updatedOrders);
+            
+            alert(`Successfully sold all ${order.shares.toFixed(2)} shares of ${order.symbol} for $${currentValue.toFixed(2)}`);
+        }
+    };
+
     return (
         <main className="min-h-screen px-6 py-12">
             <section className="mx-auto max-w-5xl space-y-6">
@@ -325,12 +349,21 @@ export default function Portfolio() {
                                                         placeholder="0.00"
                                                     />
                                                 </div>
-                                                <button
-                                                    type="submit"
-                                                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                                >
-                                                    Sell
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        type="submit"
+                                                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                    >
+                                                        Sell
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleSellAll(index, order)}
+                                                        className="rounded-lg bg-red-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-offset-2"
+                                                    >
+                                                        Sell All
+                                                    </button>
+                                                </div>
                                             </form>
                                         </div>
                                     </article>

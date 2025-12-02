@@ -15,7 +15,7 @@ export default function Home() {
 
     return (
         <main className="text-black min-h-screen space-y-8 p-6">
-            <header className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 px-6 py-10 text-white shadow-lg">
+            <header className="mx-auto max-w-6xl rounded-2xl bg-gradient-to-r from-blue-900 via-blue-700 to-blue-200 px-6 py-10 text-white shadow-lg">
                 <div className="flex justify-between items-start">
                     <div className="flex-1 text-center">
                         <p className="text-xs uppercase tracking-[0.4em] text-blue-200">Welcome to</p>
@@ -33,24 +33,24 @@ export default function Home() {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                     <Link
                         href="/budget"
-                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center p-6 text-center text-3xl font-bold uppercase tracking-wide text-white transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl"
+                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center bg-no-repeat p-6 text-center text-3xl font-bold uppercase tracking-wide text-white transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl relative overflow-hidden"
                         style={{ backgroundImage: "url('/budget.jpg')" }}
                     >
-                        Budget Tracker
+                        <span className="relative z-10 drop-shadow-2xl shadow-black" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>Budget Tracker</span>
                     </Link>
                     <Link
                         href="/portfolio"
-                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center p-6 text-center text-3xl font-bold uppercase tracking-wide text-purple-500 transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl"
+                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center bg-no-repeat p-6 text-center text-3xl font-bold uppercase tracking-wide text-white transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl relative overflow-hidden"
                         style={{ backgroundImage: "url('/stockup.jpg')" }}
                     >
-                        Portfolio
+                        <span className="relative z-10 drop-shadow-2xl shadow-black" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>Portfolio</span>
                     </Link>
                     <Link
                         href="/buystocks"
-                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center p-6 text-center text-3xl font-bold uppercase tracking-wide text-red-400 transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl"
+                        className="flex h-128 w-full flex-col justify-center rounded-lg border border-gray-200 bg-cover bg-center bg-no-repeat p-6 text-center text-3xl font-bold uppercase tracking-wide text-white transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl relative overflow-hidden"
                         style={{ backgroundImage: "url('/stockimg.jpg')" }}
                     >
-                        Buy Stocks
+                        <span className="relative z-10 drop-shadow-2xl shadow-black" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>Buy Stocks</span>
                     </Link>
                 </div>
             </section>

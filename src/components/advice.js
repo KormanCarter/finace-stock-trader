@@ -309,6 +309,13 @@ export default function Advice({ investments = 0 }) {
                     </article>
 
                 </div>
+                <Link
+                            href="/dashboard"
+                            className="flex h-116 w-full flex-col rounded-2xl border border-gray-200 bg-cover bg-center p-6 text-2xl font-bold uppercase tracking-wide text-blue-300 transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-white/70 hover:shadow-2xl"
+                            style={{ backgroundImage: "url('/dash.jpg')" }}
+                        >
+                            DashBoard
+                        </Link>
             </section>
         </main>
     );

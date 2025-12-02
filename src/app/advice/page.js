@@ -26,7 +26,7 @@ export default function AdvicePage() {
         <main className="min-h-screen m-0 p-0 w-screen">
             <section className="m-0 p-0 w-screen space-y-6">
                 <header className="px-6 pt-6 pb-2 space-y-2">
-                    <p className="inline-block rounded-md bg-blue-100 px-4 py-2 text-xs uppercase tracking-[0.5em] text-blue-700">
+                    <p className="text-xs uppercase tracking-[0.5em] text-gray-500">
                         MansaMoney
                     </p>
                     <h1 className="text-3xl font-black px-2">Investment Advice</h1>
