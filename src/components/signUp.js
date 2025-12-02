@@ -27,20 +27,26 @@ export default function SignUp({ onSwitch }) {
       return
     }
 
-    const existing = JSON.parse(localStorage.getItem('signupCredentials') || 'null');
-    if (existing && existing.email === email.trim()) {
+    const existingUsers = JSON.parse(localStorage.getItem('signupCredentials') || '[]');
+    
+    // Handle legacy single user format - convert to array
+    let usersArray = Array.isArray(existingUsers) ? existingUsers : [existingUsers];
+    
+    const userExists = usersArray.find(user => user.email === email.trim());
+    if (userExists) {
       setError('That user has already been created, please sign in instead.');
       return;
     }
 
     try {
-      const user = {
+      const newUser = {
         fullName: fullName.trim(),
         email: email.trim(),
         password,
         savedAt: new Date().toISOString(),
       }
-      localStorage.setItem('signupCredentials', JSON.stringify(user))
+      usersArray.push(newUser);
+      localStorage.setItem('signupCredentials', JSON.stringify(usersArray))
       setSuccess('Credentials saved locally. Redirecting to sign in...')
       alert("Success! You may sign in now.");
 

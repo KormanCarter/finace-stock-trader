@@ -20,20 +20,28 @@ export default function SignIn({ onSwitch }) {
         return
       }
 
-      const payload = JSON.parse(stored)
-      if (payload.email !== email.trim()) {
+      let users = JSON.parse(stored)
+      
+      // Handle legacy single user format - convert to array
+      if (!Array.isArray(users)) {
+        users = [users]
+      }
+      
+      const user = users.find(u => u.email === email.trim())
+      
+      if (!user) {
         setError('Email does not match any saved account.')
         return
       }
 
-      if (payload.password !== password) {
+      if (user.password !== password) {
         setError('Incorrect password. Please try again.')
         return
       }
 
       localStorage.setItem(
         'currentUser',
-        JSON.stringify({ fullName: payload.fullName, email: payload.email, signedInAt: new Date().toISOString() })
+        JSON.stringify({ fullName: user.fullName, email: user.email, signedInAt: new Date().toISOString() })
       )
 
       console.log('Sign in successful — email:', email)

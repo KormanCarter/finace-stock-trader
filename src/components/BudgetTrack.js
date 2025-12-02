@@ -136,7 +136,29 @@ export default function BugetTracker(){
                     </Link>
                 </header>
 
-                
+                {/* Remaining Budget Balance Display */}
+                {income && (
+                    <article className={`rounded-2xl border border-gray-200 px-6 py-5 shadow-sm ${
+                        remainingBalance >= 0 
+                            ? 'bg-gradient-to-r from-green-50 to-emerald-300' 
+                            : 'bg-gradient-to-r from-red-50 to-red-300'
+                    }`}>
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-2">
+                                <p className={`text-sm uppercase tracking-[0.4em] ${
+                                    remainingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                                }`}>
+                                    Remaining Budget Balance
+                                </p>
+                                <p className={`text-4xl font-bold ${
+                                    remainingBalance >= 0 ? 'text-green-500' : 'text-red-500'
+                                }`}>
+                                    ${remainingBalance.toFixed(2)}
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                )}
 
                 <article className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
