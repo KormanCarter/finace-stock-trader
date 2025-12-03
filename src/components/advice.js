@@ -149,6 +149,19 @@ export default function Advice({ investments = 0 }) {
             
             localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
             
+            // Update availableInvestment in budget
+            if (currentUser?.email) {
+                const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    // Reduce availableInvestment by the purchase amount
+                    const currentAvailable = Number(budgetData.availableInvestment) || Number(budgetData.investments) || 0;
+                    budgetData.availableInvestment = Math.max(0, currentAvailable - amount);
+                    localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+                }
+            }
+            
             // Update remaining investment amount
             setRemainingInvestment(prev => prev - amount);
             setIndexFund("");
@@ -171,12 +184,12 @@ export default function Advice({ investments = 0 }) {
             return;
         }
 
-        // Divide evenly among 7 stocks
-        const perStock = amount / 7;
+        
+        const perStock = amount / 6;
         
         try {
             // Fetch current prices for all stocks
-            const stocks = ["NVDA", "AAPL", "MSFT", "GOOGL", "AMZN", "AVGO", "2222"];
+            const stocks = ["NVDA", "AAPL", "MSFT", "GOOGL", "AMZN", "AVGO"];
             const pricePromises = stocks.map(async (symbol) => {
                 const response = await fetch(`/api/quote?symbol=${encodeURIComponent(symbol)}`);
                 if (!response.ok) throw new Error(`Failed to fetch price for ${symbol}`);
@@ -196,7 +209,7 @@ export default function Advice({ investments = 0 }) {
                       symbol === "GOOGL" ? "Alphabet Inc." :
                       symbol === "AMZN" ? "Amazon.com Inc." :
                       symbol === "AVGO" ? "Broadcom Inc." :
-                      "Saudi Arabian Oil Company",
+                      "Unknown Company",
                 amount: perStock,
                 shares: Number((perStock / price).toFixed(6)),
                 price: price
@@ -219,6 +232,19 @@ export default function Advice({ investments = 0 }) {
             }))];
             
             localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
+            
+            // Update availableInvestment in budget
+            if (currentUser?.email) {
+                const budgetKey = `mansamoneyBudget:${currentUser.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    const budgetData = JSON.parse(savedBudget);
+                    // Reduce availableInvestment by the purchase amount
+                    const currentAvailable = Number(budgetData.availableInvestment) || Number(budgetData.investments) || 0;
+                    budgetData.availableInvestment = Math.max(0, currentAvailable - amount);
+                    localStorage.setItem(budgetKey, JSON.stringify(budgetData));
+                }
+            }
             
             // Update remaining investment amount
             setRemainingInvestment(prev => prev - amount);
@@ -294,9 +320,9 @@ export default function Advice({ investments = 0 }) {
                     
                     <article className="h-116 w-full rounded-2xl border border-gray-200 bg-white px-8 py-8 shadow-sm flex flex-col">
                         <div className="flex flex-col gap-2">
-                            <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Top 7 Stocks</p>
+                            <p className="text-sm uppercase tracking-[0.4em] text-gray-400">Top 6 Stocks</p>
                             <div className="text-gray-600">
-                                <p className="text-2xl font-bold mb-2">This evenly invests your money into the top 7 stocks:</p>
+                                <p className="text-2xl font-bold mb-2">This evenly invests your money into the top 6 stocks:</p>
                                 <ul className="list-disc pl-6 space-y-1 font-semibold text-lg">
                                     <li>NVIDIA (NVDA)</li>
                                     <li>Apple Inc. (AAPL)</li>
@@ -304,7 +330,7 @@ export default function Advice({ investments = 0 }) {
                                     <li>Alphabet Inc. (GOOGL)</li>
                                     <li>Amazon.com Inc. (AMZN)</li>
                                     <li>Broadcom Inc. (AVGO)</li>
-                                    <li>Saudi Arabian Oil Company (2222)</li>
+                                    
                                 </ul>
                                 <div className="flex items-center gap-3 mt-3">
                                     <input 
