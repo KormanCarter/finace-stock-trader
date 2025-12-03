@@ -174,18 +174,17 @@ export default function Portfolio() {
             localStorage.setItem(storageKey, JSON.stringify(updatedOrders));
             setOrders(updatedOrders);
             
-            // Add sale proceeds back to available investment funds
+            
             if (user) {
                 const budgetKey = `mansamoneyBudget:${user.email}`;
                 const savedBudget = localStorage.getItem(budgetKey);
                 if (savedBudget) {
                     const budgetData = JSON.parse(savedBudget);
-                    // Simply add sale proceeds to current availableInvestment
                     const currentAvailable = Number(budgetData.availableInvestment) || 0;
                     budgetData.availableInvestment = currentAvailable + currentValue;
                     localStorage.setItem(budgetKey, JSON.stringify(budgetData));
                     
-                    // Update the local state to reflect the change
+                    
                     setRemainingInvestment(budgetData.availableInvestment);
                 }
             }
@@ -302,9 +301,6 @@ export default function Portfolio() {
                                         className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm"
                                     >
                                         <div className="flex flex-col gap-1">
-                                            <p className="text-xs uppercase tracking-[0.4em] text-gray-400">
-                                                {new Date(order.timestamp).toLocaleDateString()}
-                                            </p>
                                             <p className="text-xl font-semibold text-gray-900">
                                                 {order.symbol}
                                                 <span className="ml-2 text-sm font-medium text-gray-500">{order.name}</span>
@@ -354,12 +350,6 @@ export default function Portfolio() {
                                                     <dt className="text-gray-500">Return %</dt>
                                                     <dd className={`font-semibold ${gainPercent != null && gainPercent >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                                                         {gainPercent != null ? `${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(2)}%` : "—"}
-                                                    </dd>
-                                                </div>
-                                                <div>
-                                                    <dt className="text-gray-500">Date</dt>
-                                                    <dd className="text-gray-900 font-semibold">
-                                                        {new Date(order.timestamp).toLocaleDateString()}
                                                     </dd>
                                                 </div>
                                             </dl>

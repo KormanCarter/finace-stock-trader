@@ -18,26 +18,60 @@ export default function Dashboard() {
     }, {});
 
     useEffect(() => {
-        // Load current user and their data
-        const userRaw = localStorage.getItem("currentUser");
-        const user = userRaw ? JSON.parse(userRaw) : null;
-        setCurrentUser(user);
-        
-        if (user) {
-            // Load actual expenses (spending)
-            const expensesKey = `mansamoneyActualExpenses:${user.email}`;
-            const savedExpenses = localStorage.getItem(expensesKey);
-            if (savedExpenses) {
-                setActualExpenses(JSON.parse(savedExpenses));
-            }
+        const loadData = () => {
+            // Load current user and their data
+            const userRaw = localStorage.getItem("currentUser");
+            const user = userRaw ? JSON.parse(userRaw) : null;
+            setCurrentUser(user);
+            
+            if (user?.email) {
+                // Load actual expenses (spending)
+                const expensesKey = `mansamoneyActualExpenses:${user.email}`;
+                const savedExpenses = localStorage.getItem(expensesKey);
+                
+                // Debug: Log all localStorage keys that contain "expense" or "Expense"
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('expense') || key.includes('Expense'))) {
+                        console.log('Found expense key:', key, '=', localStorage.getItem(key));
+                    }
+                }
+                console.log('Looking for key:', expensesKey);
+                console.log('Current user email:', user.email);
+                console.log('Found data:', savedExpenses);
+                
+                if (savedExpenses) {
+                    try {
+                        const parsedExpenses = JSON.parse(savedExpenses);
+                        console.log('Parsed expenses:', parsedExpenses);
+                        setActualExpenses(Array.isArray(parsedExpenses) ? parsedExpenses : []);
+                    } catch (error) {
+                        console.log('Parse error:', error);
+                        setActualExpenses([]);
+                    }
+                } else {
+                    setActualExpenses([]);
+                }
 
-            // Load budget data
-            const budgetKey = `mansamoneyBudget:${user.email}`;
-            const savedBudget = localStorage.getItem(budgetKey);
-            if (savedBudget) {
-                setBudgetData(JSON.parse(savedBudget));
+                // Load budget data
+                const budgetKey = `mansamoneyBudget:${user.email}`;
+                const savedBudget = localStorage.getItem(budgetKey);
+                if (savedBudget) {
+                    try {
+                        setBudgetData(JSON.parse(savedBudget));
+                    } catch (error) {
+                        setBudgetData(null);
+                    }
+                }
             }
-        }
+        };
+
+        loadData();
+        
+        // Also set up an interval to check for updates every 2 seconds
+        const interval = setInterval(loadData, 2000);
+        
+        return () => clearInterval(interval);
     }, []);
 
     const addActualExpense = () => {
@@ -287,7 +321,7 @@ export default function Dashboard() {
                                         <div className="flex-1">
                                             <h3 className="font-medium text-gray-900">{expense.name}</h3>
                                             <p className="text-sm text-gray-500">
-                                                {categoryLabels[expense.category]} • {new Date(expense.timestamp).toLocaleDateString()}
+                                                {categoryLabels[expense.category]}
                                             </p>
                                         </div>
                                         <div className="text-right">

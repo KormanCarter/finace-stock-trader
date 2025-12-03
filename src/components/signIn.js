@@ -65,7 +65,7 @@ export default function SignIn({ onSwitch }) {
       <div className="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
         <div className="bg-gray-900 text-white px-6 py-4">
           <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
-          <p className="text-sm text-gray-300">Welcome back — enter your credentials.</p>
+          <p className="text-sm text-gray-300">Welcome back</p>
         </div>
 
         <form className="space-y-5 px-6 py-6" onSubmit={handleSubmit}>
